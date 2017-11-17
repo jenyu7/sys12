@@ -1,24 +1,38 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
-#include <stdlib.h>
-#include <sys/types.h>
 #include <sys/wait.h>
 
+int child() {
+  printf("I'm a child. (pid: %d)\n", getpid());
+  srand(time(NULL));
+  int randint = rand() % 16 + 5;
+  sleep(randint);
+  printf("I'm done sleeping! (pid: %d)\n", getpid());
+  return randint;
+}
+
 int main() {
-  srand( time(NULL) );
-  printf("Before Fork\n");
-  int rand_num = 2; //5 + rand() % 20;
+
+  printf("I'm a parent. (pid: %d)\n", getpid());
   int f = fork();
-  if (!f) {
-    printf("I am a child, my pid is: %d\n", getpid());
-    sleep(rand_num);
-    printf("I am done sleeping.\n");
+  int status;
+
+  if(f){
+    int g = fork();
+    if(g){
+      int pid = wait(&status);
+      printf("Child with pid %d slept for %d seconds\n", pid, WEXITSTATUS(status));
+      printf("I (The Parent) am done. (pid: %d)\n", getpid());
+      exit(0);
+    }
+    else {
+      return child();
+    }
   }
   else {
-    wait(&rand_num);
-    printf("I am a parent, my pid is: %d\n", getpid());
-    printf("my child was asleep for: %d\n", rand_num);
+    return child();
   }
-  return 0;
+
 }
