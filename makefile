@@ -5,4 +5,4 @@ run: all
 	./fork
 
 clean:
-	rm -f *~
+	rm -f *~ fork
