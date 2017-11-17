@@ -14,7 +14,7 @@
 //sleeping child
 int child() {
   printf("I'm a child. (pid: %d)\n", getpid());
-  srand(time(NULL));
+  srand(time(NULL) + getpid());
   int randint = rand() % 16 + 5;
   sleep(randint);
   printf("I'm done sleeping! (pid: %d)\n", getpid());
